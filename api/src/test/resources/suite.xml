@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+
+<suite name="suite">
+    <test name="daily">
+        <classes>
+            <class name="ru.rogov.tests.classes.MyTest"/>
+        </classes>
+    </test>
+</suite>

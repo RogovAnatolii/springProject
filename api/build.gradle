@@ -1,0 +1,81 @@
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'io.qameta.allure:allure-gradle:+'
+    }
+}
+
+group 'ru.rogov'
+version '1.0-SNAPSHOT'
+
+apply plugin: 'java'
+apply plugin: 'idea'
+apply plugin: 'io.qameta.allure'
+
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+    jcenter()
+}
+
+tasks.withType(JavaCompile) {
+    options.encoding = "UTF-8"
+}
+
+configurations {
+    agent
+}
+
+allure {
+    version = '2.4.1'
+    aspectjweaver = true
+}
+
+dependencies {
+    compile "org.springframework:spring-core:" + spring_version
+    agent "org.aspectj:aspectjweaver:" + aspectj_version
+    compile "org.testng:testng:" + testng_version
+    compile group: 'org.springframework', name: 'spring-context', version: '5.0.2.RELEASE'
+    testCompile group: 'org.springframework', name: 'spring-test', version: '5.0.2.RELEASE'
+    compile "org.slf4j:slf4j-api:" + slf4j_version
+    compile "org.slf4j:slf4j-simple:" + slf4j_version
+    compile "org.projectlombok:lombok:" + lombok_version
+    compile "io.qameta.allure:allure-testng:" + allure_version
+    compile "io.qameta.allure:allure-rest-assured:" + allure_version
+    compile "org.hamcrest:java-hamcrest:" + hamcrest_version
+    compile "com.fasterxml.jackson.core:jackson-databind:" + jackson_version
+    compile "com.fasterxml.jackson.core:jackson-core:" + jackson_version
+    compile "com.fasterxml.jackson.core:jackson-annotations:" + jackson_version
+    compile "io.rest-assured:rest-assured:" + restassured_version
+    compile "ru.yandex.qatools.properties:properties-loader:" + propertiesLoader_version
+    compile group: 'javax.servlet', name: 'javax.servlet-api', version: '4.0.0'
+}
+
+test.doFirst {
+    jvmArgs "-javaagent:${configurations.agent.singleFile}"
+    jvmArgs "-Dfile.encoding=UTF-8"
+}
+
+test {
+    testLogging {
+        showStandardStreams = true
+    }
+
+    if(System.getenv('property.environment') == null) {
+        environment 'property.environment', 'test'
+        println 'Contour: test(default)'
+    } else {
+        environment 'property.environment', System.getProperty('property.environment')
+        println 'property.environment: ' + System.getProperty('property.environment')
+    }
+
+    useTestNG() {
+        suites "src/test/resources/suite.xml"
+    }
+}
+
